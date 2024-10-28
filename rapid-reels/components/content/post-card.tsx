@@ -1,15 +1,20 @@
-import Image from 'next/image'
-import { formatDistanceToNow } from 'date-fns'
-import { PostInteraction } from '@/components/social/post-interaction'
+"use client"
+
+import Image from "next/image"
+import { useState } from "react"
+import { Heart, MessageCircle, Share2 } from "lucide-react"
+import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { PostCarousel } from "./post-carousel"
 
 interface PostCardProps {
   post: {
     id: string
-    user_id: string
     caption: string
-    hashtags: string[]
-    media_url: string
-    media_type: 'image' | 'video'
+    media_url?: string // Single URL from database
+    media_urls?: string[] // Array of URLs for dummy data
+    media_type: 'image' | 'video' | 'carousel'
     created_at: string
     likes: number
     comments: Array<{
@@ -35,54 +40,103 @@ interface PostCardProps {
 }
 
 export function PostCard({ post, user, currentUser }: PostCardProps) {
+  const [isLiked, setIsLiked] = useState(currentUser.hasLiked)
+  const [likesCount, setLikesCount] = useState(post.likes)
+  const [showComments, setShowComments] = useState(false)
+
+  // Handle both single media_url and media_urls array
+  const mediaUrls = post.media_urls || (post.media_url ? [post.media_url] : [])
+
+  const handleLike = () => {
+    setIsLiked(!isLiked)
+    setLikesCount(prev => isLiked ? prev - 1 : prev + 1)
+  }
+
   return (
-    <div className="border rounded-lg overflow-hidden shadow-md">
-      <div className="p-4 flex items-center space-x-2">
-        <Image
-          src={user.avatar_url || 'https://avatar.iran.liara.run/public/1'}
-          alt={user.username}
-          width={40}
-          height={40}
-          className="rounded-full"
-        />
-        <span className="font-semibold">{user.username}</span>
-      </div>
-      {post.media_type === 'image' ? (
-        <Image
-          src={post.media_url}
-          alt={post.caption}
-          width={500}
-          height={500}
-          layout="responsive"
-        />
-      ) : (
-        <video src={post.media_url} controls className="w-full" />
-      )}
+    <Card className="overflow-hidden">
       <div className="p-4">
-        <p>{post.caption}</p>
-        <div className="mt-2">
-          {post.hashtags.map((tag, index) => (
-            <span key={index} className="text-blue-500 mr-2">
-              {tag}
-            </span>
-          ))}
+        <div className="flex items-center gap-3">
+          <Avatar>
+            <AvatarImage src={user.avatar_url} alt={user.username} />
+            <AvatarFallback>{user.username[0]}</AvatarFallback>
+          </Avatar>
+          <div>
+            <p className="font-semibold">{user.username}</p>
+          </div>
         </div>
-        <p className="text-gray-500 text-sm mt-2">
-          {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-        </p>
-        <PostInteraction
-          postId={post.id}
-          author={{
-            id: user.id,
-            username: user.username,
-            avatarUrl: user.avatar_url
-          }}
-          likes={post.likes}
-          comments={post.comments}
-          isLiked={currentUser.hasLiked}
-          isFollowing={currentUser.isFollowing}
-        />
       </div>
-    </div>
+
+      {/* Media Content */}
+      <div className="relative">
+        {mediaUrls.length > 0 && (
+          post.media_type === 'carousel' && mediaUrls.length > 1 ? (
+            <PostCarousel media_urls={mediaUrls} />
+          ) : post.media_type === 'video' ? (
+            <video
+              src={mediaUrls[0]}
+              className="w-full"
+              controls
+            />
+          ) : (
+            <div className="relative aspect-square">
+              <Image
+                src={mediaUrls[0]}
+                alt="Post content"
+                fill
+                className="object-cover"
+              />
+            </div>
+          )
+        )}
+      </div>
+
+      <div className="p-4 space-y-3">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleLike}
+            className={isLiked ? "text-red-500" : ""}
+          >
+            <Heart className={`h-6 w-6 ${isLiked ? "fill-current" : ""}`} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setShowComments(!showComments)}
+          >
+            <MessageCircle className="h-6 w-6" />
+          </Button>
+          <Button variant="ghost" size="icon">
+            <Share2 className="h-6 w-6" />
+          </Button>
+        </div>
+
+        <div>
+          <p className="font-semibold">{likesCount} likes</p>
+          <p>
+            <span className="font-semibold">{user.username}</span>{" "}
+            {post.caption}
+          </p>
+        </div>
+
+        {showComments && (
+          <div className="space-y-2">
+            {post.comments.map((comment) => (
+              <div key={comment.id} className="flex items-start gap-2">
+                <Avatar className="w-6 h-6">
+                  <AvatarImage src={comment.user.avatarUrl} />
+                  <AvatarFallback>{comment.user.username[0]}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <span className="font-semibold">{comment.user.username}</span>{" "}
+                  {comment.content}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </Card>
   )
 }

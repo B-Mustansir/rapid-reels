@@ -61,18 +61,19 @@ export default async function UserProfilePage({
   )
 
   const { data: { session } } = await supabase.auth.getSession()
-  
+
   if (!session) {
     redirect('/auth')
   }
 
-  const { data: profile } = await supabase
+  // Fetch the profile data for the requested username
+  const { data: profile, error } = await supabase
     .from('profiles')
     .select('*')
     .eq('username', username)
     .single()
 
-  if (!profile) {
+  if (error || !profile) {
     notFound()
   }
 
@@ -89,17 +90,13 @@ export default async function UserProfilePage({
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="space-y-6">
       <UserProfile 
         profile={profile} 
         isCurrentUser={isCurrentUser}
         trustScore={trustScore}
       />
-      <TrustScore 
-        score={trustScore} 
-        userId={profile.id} 
-        isCurrentUser={isCurrentUser}
-      />
+      {isCurrentUser && <TrustScore score={trustScore} userId={profile.id} />}
     </div>
   )
 }

@@ -10,6 +10,14 @@ const nextConfig = {
                 protocol: 'https',
                 hostname: 'res.cloudinary.com',
             },
+            {
+                protocol: 'https',
+                hostname: 'avatar.iran.liara.run',
+            },
+            {
+                protocol: 'https',
+                hostname: 'cdn.pixabay.com',
+            }
         ],
         domains: [
             'avatar.iran.liara.run',
