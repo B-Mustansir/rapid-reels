@@ -7,13 +7,39 @@ import { QRCodeSVG } from 'qrcode.react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/hooks/use-toast';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { RECLAIM_PROVIDERS } from '@/lib/constants/reclaim-providers';
+import { updateTrustScore } from '@/lib/utils/trust-score';
 
-export function ReclaimVerification({ onVerificationComplete }) {
+export function ReclaimVerification({ onVerificationComplete, userId }) {
   const [requestUrl, setRequestUrl] = useState('');
   const [proofs, setProofs] = useState(null);
   const [status, setStatus] = useState('');
   const [verificationComplete, setVerificationComplete] = useState(false);
   const { toast } = useToast();
+
+  const handleVerificationSuccess = (proofs) => {
+    if (proofs) {
+      if (typeof proofs === 'string') {
+        console.log('SDK Message:', proofs);
+        setProofs(JSON.parse(proofs));
+      } else {
+        console.log('Proof received:', proofs);
+        setProofs(proofs);
+        setVerificationComplete(true);
+
+        // Update trust score
+        const updatedScore = updateTrustScore(userId, RECLAIM_PROVIDERS.GITHUB.id);
+        console.log('Updated score:', updatedScore);
+
+        toast({
+          title: 'Verification Completed',
+          description: `${RECLAIM_PROVIDERS.GITHUB.name} verified successfully!`,
+        });
+        onVerificationComplete?.(proofs);
+      }
+      setStatus('Proof received!');
+    }
+  };
 
   useEffect(() => {
     async function setup() {
@@ -27,26 +53,7 @@ export function ReclaimVerification({ onVerificationComplete }) {
 
         await startVerificationSession(
           reclaimProofRequest,
-          (proofs) => {
-            if (proofs) {
-              if (typeof proofs === 'string') {
-                console.log('SDK Message:', proofs);
-                setProofs(JSON.parse(proofs));
-              } else {
-                console.log('Proof received:', proofs?.claimData.context);
-                console.log('Proofs:', proofs);
-                setProofs(proofs?.claimData.context);
-                setVerificationComplete(true);
-                const username = proofs?.claimData.context.extractedParameters.username;
-                toast({
-                  title: 'Verification Completed',
-                  description: `Username detected: ${username}`,
-                });
-                onVerificationComplete?.(proofs?.claimData.context);
-              }
-              setStatus('Proof received!');
-            }
-          },
+          handleVerificationSuccess,
           (error) => {
             console.error('Verification failed', error);
             setStatus(`Error: ${error.message}`);
@@ -61,7 +68,7 @@ export function ReclaimVerification({ onVerificationComplete }) {
     }
 
     setup();
-  }, [onVerificationComplete]);
+  }, [onVerificationComplete, userId]);
 
   async function initializeReclaim() {
     if (!process.env.NEXT_PUBLIC_RECLAIM_APP_ID || !process.env.NEXT_PUBLIC_RECLAIM_APP_SECRET) {
@@ -71,7 +78,7 @@ export function ReclaimVerification({ onVerificationComplete }) {
     return await ReclaimProofRequest.init(
       process.env.NEXT_PUBLIC_RECLAIM_APP_ID,
       process.env.NEXT_PUBLIC_RECLAIM_APP_SECRET,
-      '6d3f6753-7ee6-49ee-a545-62f1b1822ae5' // Github Username Provider ID
+      RECLAIM_PROVIDERS.GITHUB.id
     );
   }
 
@@ -92,9 +99,27 @@ export function ReclaimVerification({ onVerificationComplete }) {
     window.open(requestUrl, '_blank');
   };
 
-  const RenderProofTable = ({ data }) => {
-    const { contextAddress, contextMessage, extractedParameters, providerHash } = data;
-  
+  const renderProofTable = (proofData) => {
+    if (!proofData) return null;
+
+    const renderValue = (value) => {
+      if (typeof value === 'object' && value !== null) {
+        return (
+          <Table>
+            <TableBody>
+              {Object.entries(value).map(([subKey, subValue]) => (
+                <TableRow key={subKey}>
+                  <TableCell className="font-medium">{subKey}</TableCell>
+                  <TableCell>{renderValue(subValue)}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        );
+      }
+      return String(value);
+    };
+
     return (
       <Table>
         <TableHeader>
@@ -104,24 +129,12 @@ export function ReclaimVerification({ onVerificationComplete }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow>
-            <TableCell>Context Address</TableCell>
-            <TableCell>{contextAddress}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>Context Message</TableCell>
-            <TableCell>{contextMessage}</TableCell>
-          </TableRow>
-          {Object.entries(extractedParameters).map(([key, value]) => (
+          {Object.entries(proofData).map(([key, value]) => (
             <TableRow key={key}>
-              <TableCell>{key}</TableCell>
-              <TableCell>{value}</TableCell>
+              <TableCell className="font-medium">{key}</TableCell>
+              <TableCell>{renderValue(value)}</TableCell>
             </TableRow>
           ))}
-          <TableRow>
-            <TableCell>Provider Hash</TableCell>
-            <TableCell>{providerHash}</TableCell>
-          </TableRow>
         </TableBody>
       </Table>
     );
@@ -155,7 +168,7 @@ export function ReclaimVerification({ onVerificationComplete }) {
       {proofs && (
         <div className="mt-4">
           <h4 className="font-medium mb-2">Verification Details</h4>
-          <div>{RenderProofTable({ data: JSON.parse(proofs) })}</div>
+          <div>{renderProofTable(proofs)}</div>
           <pre className="text-sm bg-gray-50 p-4 rounded overflow-auto">
             {JSON.stringify(proofs, null, 2)}
           </pre>

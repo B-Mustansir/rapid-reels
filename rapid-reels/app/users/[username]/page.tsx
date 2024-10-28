@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { notFound, redirect } from 'next/navigation'
 import { UserProfile } from '@/components/users/user-profile'
 import { TrustScore } from '@/components/users/trust-score'
+import { getTrustScore } from '@/lib/utils/trust-score'
 
 // Dummy trust score data
 const dummyTrustScore = {
@@ -81,13 +82,7 @@ export default async function UserProfilePage({
   const isCurrentUser = session.user.id === profile.id
 
   // Use dummy trust score data for now
-  const trustScore = {
-    ...dummyTrustScore,
-    // Randomize some values for demo purposes
-    engagement_score: Math.floor(Math.random() * 100),
-    total_score: Math.floor(Math.random() * 100),
-    verification_level: ['none', 'basic', 'advanced'][Math.floor(Math.random() * 3)] as 'none' | 'basic' | 'advanced'
-  }
+  const trustScore = getTrustScore(profile.id)
 
   return (
     <div className="space-y-6">
