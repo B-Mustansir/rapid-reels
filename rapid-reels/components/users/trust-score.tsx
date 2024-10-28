@@ -1,8 +1,6 @@
 "use client"
 
-import { useState } from 'react'
 import { Shield, CheckCircle, AlertCircle } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import {
   Tooltip,
   TooltipContent,
@@ -10,7 +8,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { Progress } from '@/components/ui/progress'
-
+import { ReclaimVerification } from '@/components/verification/reclaim-verification'
 interface TrustScoreProps {
   score: {
     proof_of_personhood: boolean
@@ -23,20 +21,6 @@ interface TrustScoreProps {
 }
 
 export function TrustScore({ score, userId }: TrustScoreProps) {
-  const [isVerifying, setIsVerifying] = useState(false)
-
-  const handleVerification = async () => {
-    setIsVerifying(true)
-    try {
-      // TODO: Implement Reclaim Protocol verification
-      console.log('Starting verification for user:', userId)
-    } catch (error) {
-      console.error('Verification failed:', error)
-    } finally {
-      setIsVerifying(false)
-    }
-  }
-
   const getVerificationStatus = () => {
     if (!score) return 'Not Verified'
     if (score.verification_level === 'advanced') return 'Fully Verified'
@@ -49,6 +33,12 @@ export function TrustScore({ score, userId }: TrustScoreProps) {
     if (score.total_score > 80) return 'bg-green-500'
     if (score.total_score > 50) return 'bg-yellow-500'
     return 'bg-red-500'
+  }
+
+  const handleVerificationComplete = (proofData: any) => {
+    // Handle the verification completion
+    console.log('Verification completed with proof data:', proofData)
+    // Here you can update the score or trigger a refresh
   }
 
   return (
@@ -111,16 +101,7 @@ export function TrustScore({ score, userId }: TrustScoreProps) {
 
         <div className="border-t pt-4">
           <h3 className="font-medium mb-2">Verification Status</h3>
-          <p className="text-sm text-gray-600">{getVerificationStatus()}</p>
-          {(!score || score.verification_level !== 'advanced') && (
-            <Button
-              onClick={handleVerification}
-              disabled={isVerifying}
-              className="mt-2"
-            >
-              {isVerifying ? 'Verifying...' : 'Verify with Reclaim'}
-            </Button>
-          )}
+          <ReclaimVerification onVerificationComplete={handleVerificationComplete} />
         </div>
       </div>
     </div>

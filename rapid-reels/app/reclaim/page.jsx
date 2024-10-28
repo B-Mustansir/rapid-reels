@@ -67,7 +67,9 @@ export default function ReclaimDemo() {
       process.env.NEXT_PUBLIC_RECLAIM_APP_ID,
       process.env.NEXT_PUBLIC_RECLAIM_APP_SECRET,
       // "a09df809-ea2d-4413-ab2f-0d83689e388d"    // X Username Provider ID
-      "f35480af-3e8a-4fe6-9ff3-13cfdc62c4c9"    // Edit AI Provider ID
+      // "f35480af-3e8a-4fe6-9ff3-13cfdc62c4c9"    // Edit AI Provider ID
+      // "c94476a0-8a75-4563-b70a-bf6124d7c59b"    // Kaggle Username Provider ID
+      '6d3f6753-7ee6-49ee-a545-62f1b1822ae5' // Github Username Provider ID
     )
     return reclaimProofRequest
   }

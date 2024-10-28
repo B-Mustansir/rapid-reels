@@ -14,9 +14,9 @@ const dummyTrustScore = {
     'Email Verified',
     'Phone Number Verified',
     'GitHub Account Linked',
-    'LinkedIn Profile Verified',
-    'Twitter Account Verified',
-    'Google Account Linked'
+    // 'LinkedIn Profile Verified',
+    // 'Twitter Account Verified',
+    // 'Google Account Linked'
   ],
   badges: [
     'Trusted Creator',
