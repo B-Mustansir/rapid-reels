@@ -6,6 +6,7 @@ import { createBrowserClient } from '@supabase/ssr'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/hooks/use-toast'
+import { User } from '@supabase/supabase-js'
 
 export function AuthForm() {
   const [email, setEmail] = useState('')
@@ -19,24 +20,48 @@ export function AuthForm() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
 
+  async function getUsernameAndRedirect(user: User) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('username')
+      .eq('id', user.id)
+      .single()
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Could not fetch user profile",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (data?.username) {
+      router.push(`/users/${data.username}`)
+    } else {
+      // Fallback to profile page if username is not set
+      router.push('/profile')
+    }
+  }
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
     try {
-      const { error } = isLogin
+      const authResponse = isLogin
         ? await supabase.auth.signInWithPassword({ email, password })
         : await supabase.auth.signUp({ email, password })
 
-      if (error) throw error
+      if (authResponse.error) throw authResponse.error
 
       toast({
         title: isLogin ? "Logged in successfully" : "Account created successfully",
         description: isLogin ? "Welcome back!" : "Please check your email to verify your account.",
       })
 
-      if (isLogin) {
-        router.push('/profile')
+      if (isLogin && authResponse.data.user) {
+        await getUsernameAndRedirect(authResponse.data.user)
       }
     } catch (error: unknown) {
       toast({

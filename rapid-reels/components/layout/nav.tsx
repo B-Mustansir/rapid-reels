@@ -10,28 +10,43 @@ import { createBrowserClient } from '@supabase/ssr'
 export function Nav() {
   const pathname = usePathname()
   const [username, setUsername] = useState<string | null>(null)
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   useEffect(() => {
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
-
-    async function getProfile() {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('username')
-          .eq('id', session.user.id)
-          .single()
-        
-        if (profile) setUsername(profile.username)
-      }
-    }
-
+    // Initial profile fetch
     getProfile()
+
+    // Subscribe to auth state changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        getProfile()
+      } else {
+        setUsername(null)
+      }
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [])
+
+  async function getProfile() {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', session.user.id)
+        .single()
+      
+      if (profile) setUsername(profile.username)
+    }
+  }
 
   const links = [
     { href: '/', label: 'Home', icon: Home },

@@ -45,29 +45,26 @@ export function SuggestedUsers() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-4">
-      <h2 className="text-xl font-semibold mb-4">Suggested Users</h2>
-      <div className="space-y-4">
+    <div className="space-y-4">
+      <h2 className="text-lg sm:text-xl font-semibold">Suggested Users</h2>
+      
+      <div className="space-y-3">
         {suggestedUsers.map((user) => (
-          <div key={user.id} className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Avatar>
-                <AvatarImage src={user.avatarUrl} alt={user.username} />
-                <AvatarFallback>{user.username[0]}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-medium">{user.username}</p>
-                <p className="text-sm text-gray-500 truncate max-w-[200px]">
-                  {user.bio}
-                </p>
-              </div>
+          <div key={user.id} className="flex items-center gap-3 p-2">
+            <Avatar>
+              <AvatarImage src={user.avatarUrl} alt={user.username} />
+              <AvatarFallback>{user.username[0]}</AvatarFallback>
+            </Avatar>
+            
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium truncate">{user.username}</p>
+              <p className="text-xs text-muted-foreground truncate">
+                {user.bio}
+              </p>
             </div>
-            <Button
-              variant={user.isFollowing ? "outline" : "default"}
-              size="sm"
-              onClick={() => handleFollow(user.id)}
-            >
-              {user.isFollowing ? 'Following' : 'Follow'}
+            
+            <Button variant="outline" size="sm" onClick={() => handleFollow(user.id)}>
+              Follow
             </Button>
           </div>
         ))}

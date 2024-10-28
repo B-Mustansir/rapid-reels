@@ -1,4 +1,5 @@
 import { PostCard } from '@/components/content/post-card'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 
 // Dummy data for trending posts
 const trendingPosts = [
@@ -30,9 +31,11 @@ const trendingPosts = [
 
 export function TrendingPosts() {
   return (
-    <div className="space-y-6">
-      <h2 className="text-xl font-semibold">Trending Now</h2>
-      <div className="grid gap-6">
+    <div className="space-y-4">
+      <h2 className="text-lg sm:text-xl font-semibold">Trending</h2>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Trending post cards */}
         {trendingPosts.map((post) => (
           <PostCard
             key={post.id}
