@@ -11,7 +11,7 @@ const dummyReels = [
       avatar_url: 'https://avatar.iran.liara.run/public/1',
     },
     video_url: 'https://res.cloudinary.com/dvhqjxen3/video/upload/v1730054311/samples/reels/QuickStyle-Kala-Chashma.mp4',
-    caption: '🎵 New dance routine! #dance #viral',
+    caption: 'New dance routine! #dance #viral',
     likes: 1200,
     comments: [
       {
