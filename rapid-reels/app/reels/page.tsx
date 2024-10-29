@@ -74,12 +74,12 @@ const dummyReels = [
 
 export default function ReelsPage() {
   return (
-    <div className="h-screen bg-black">
+    <div className="h-screen">
       <div className="flex h-full flex-col lg:flex-row">
         <div className="flex-1">
           <ReelsViewer reels={dummyReels} />
         </div>
-        <div className="w-full lg:w-96 border-t lg:border-l border-gray-800">
+        <div className="w-full lg:w-96">
           <ReelsCreator />
         </div>
       </div>

@@ -72,7 +72,7 @@ export function ReelCard({ reel, isVisible }: ReelCardProps) {
       <video
         ref={videoRef}
         src={reel.video_url}
-        className="h-full w-full object-contain"
+        className="h-full object-cover"
         loop
         muted={isMuted}
         playsInline

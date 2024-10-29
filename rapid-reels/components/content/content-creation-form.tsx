@@ -103,7 +103,7 @@ export function ContentCreationForm() {
           )}
         </div>
       )}
-      <Button type="submit" disabled={isLoading || !mediaUrl}>
+      <Button type="submit" disabled={isLoading || !mediaUrl} className='ml-4'>
         {isLoading ? 'Creating...' : 'Create Post'}
       </Button>
     </form>

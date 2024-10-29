@@ -75,13 +75,13 @@ export function ReelsViewer({ reels }: ReelsViewerProps) {
   return (
     <div 
       ref={containerRef}
-      className="relative h-full overflow-y-auto snap-y snap-mandatory"
+      className="relative h-[100dvh] md:h-[calc(100vh-6rem)] overflow-y-auto snap-y snap-mandatory rounded-3xl"
       style={{ scrollBehavior: 'smooth' }}
     >
       {reels.map((reel, index) => (
         <div 
           key={reel.id}
-          className="h-full snap-start snap-always"
+          className="h-[87dvh] md:h-full snap-start snap-always"
         >
           <ReelCard 
             reel={reel} 

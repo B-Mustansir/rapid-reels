@@ -11,7 +11,7 @@ interface ReelControlsProps {
 export function ReelControls({ onNext, onPrevious, hasNext, hasPrevious }: ReelControlsProps) {
   return (
     <div className="absolute right-4 top-1/2 transform -translate-y-1/2 space-y-4">
-      <Button
+      {/* <Button
         variant="ghost"
         size="icon"
         onClick={onPrevious}
@@ -28,7 +28,7 @@ export function ReelControls({ onNext, onPrevious, hasNext, hasPrevious }: ReelC
         className="text-white hover:bg-white/20"
       >
         <ChevronDown className="h-6 w-6" />
-      </Button>
+      </Button> */}
     </div>
   )
 }

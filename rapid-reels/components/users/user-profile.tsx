@@ -97,9 +97,9 @@ export function UserProfile({ profile, isCurrentUser, trustScore }: UserProfileP
 
   if (isEditing && isCurrentUser) {
     return (
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 space-y-4">
-        <div className="flex items-center space-x-4">
-          <Avatar className="h-24 w-24">
+      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-4 sm:p-6 space-y-4">
+        <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
+          <Avatar className="h-20 w-20 sm:h-24 sm:w-24">
             <AvatarImage src={formData.avatar_url || 'https://avatar.iran.liara.run/public/1'} />
             <AvatarFallback>{formData.username[0]}</AvatarFallback>
           </Avatar>
@@ -108,6 +108,7 @@ export function UserProfile({ profile, isCurrentUser, trustScore }: UserProfileP
             placeholder="Avatar URL"
             value={formData.avatar_url || ''}
             onChange={(e) => setFormData({ ...formData, avatar_url: e.target.value })}
+            className="w-full"
           />
         </div>
         <Input
@@ -128,11 +129,16 @@ export function UserProfile({ profile, isCurrentUser, trustScore }: UserProfileP
           value={formData.bio}
           onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
         />
-        <div className="flex space-x-2">
-          <Button type="submit" disabled={isLoading}>
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+          <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
             {isLoading ? 'Saving...' : 'Save Profile'}
           </Button>
-          <Button type="button" variant="outline" onClick={() => setIsEditing(false)}>
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={() => setIsEditing(false)}
+            className="w-full sm:w-auto"
+          >
             Cancel
           </Button>
         </div>
@@ -141,29 +147,34 @@ export function UserProfile({ profile, isCurrentUser, trustScore }: UserProfileP
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <div className="flex items-start space-x-6">
-        <Avatar className="h-24 w-24">
+    <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
+        <Avatar className="h-20 w-20 sm:h-24 sm:w-24 mx-auto sm:mx-0">
           <AvatarImage src={profile.avatar_url || 'https://avatar.iran.liara.run/public/1'} alt={profile.username} />
           <AvatarFallback>{profile.username[0]}</AvatarFallback>
         </Avatar>
-        <div className="flex-1">
-          <div className="flex items-center justify-between">
+        <div className="flex-1 text-center sm:text-left">
+          <div className="flex flex-col sm:flex-row items-center sm:justify-between">
             <div>
-              <div className="flex items-center space-x-2">
-                <h1 className="text-2xl font-bold">{profile.username}</h1>
+              <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
+                <h1 className="text-xl sm:text-2xl font-bold">{profile.username}</h1>
                 {getVerificationBadge()}
               </div>
-              <p className="text-gray-600">{profile.full_name}</p>
+              <p className="text-gray-600 mt-1">{profile.full_name}</p>
             </div>
             {isCurrentUser ? (
-              <Button variant="outline" onClick={() => setIsEditing(true)}>
+              <Button 
+                variant="outline" 
+                onClick={() => setIsEditing(true)}
+                className="mt-4 sm:mt-0 w-full sm:w-auto"
+              >
                 <Edit2 className="mr-2 h-4 w-4" /> Edit Profile
               </Button>
             ) : (
               <Button
                 variant={isFollowing ? "outline" : "default"}
                 onClick={handleFollow}
+                className="mt-4 sm:mt-0 w-full sm:w-auto"
               >
                 {isFollowing ? (
                   <>
@@ -177,7 +188,7 @@ export function UserProfile({ profile, isCurrentUser, trustScore }: UserProfileP
               </Button>
             )}
           </div>
-          <div className="flex space-x-6 my-4">
+          <div className="flex justify-center sm:justify-start space-x-6 my-4">
             <div>
               <span className="font-semibold">{profile.followers_count}</span>{" "}
               <span className="text-gray-600">followers</span>
