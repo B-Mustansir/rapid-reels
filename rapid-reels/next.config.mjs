@@ -24,6 +24,9 @@ const nextConfig = {
             'cdn.pixabay.com'
         ],
     },
+    eslint: {
+        ignoreDuringBuilds: process.env.NEXT_PUBLIC_DISABLE_ESLINT === "true",
+    },
 };
 
 export default nextConfig;
