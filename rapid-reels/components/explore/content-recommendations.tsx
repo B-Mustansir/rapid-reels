@@ -32,7 +32,7 @@ export function ContentRecommendations() {
   return (
     <div className="space-y-6">
       <h2 className="text-lg sm:text-xl font-semibold">Recommended for You</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         {recommendedPosts.map((post) => (
           <PostCard
             key={post.id}

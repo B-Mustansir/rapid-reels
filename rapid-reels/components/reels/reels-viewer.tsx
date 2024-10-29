@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { ReelCard } from './reel-card'
-import { ReelControls } from './reel-controls'
 
 interface Reel {
   id: string
@@ -75,13 +74,13 @@ export function ReelsViewer({ reels }: ReelsViewerProps) {
   return (
     <div 
       ref={containerRef}
-      className="relative h-[100dvh] md:h-[calc(100vh-6rem)] overflow-y-auto snap-y snap-mandatory rounded-3xl"
+      className="relative h-[100dvh] md:h-[calc(100vh-6rem)] overflow-y-auto snap-y snap-mandatory rounded-3xl md:rounded-xl scrollbar-hide"
       style={{ scrollBehavior: 'smooth' }}
     >
       {reels.map((reel, index) => (
         <div 
           key={reel.id}
-          className="h-[87dvh] md:h-full snap-start snap-always"
+          className="h-[85dvh] md:h-full snap-start snap-always"
         >
           <ReelCard 
             reel={reel} 
@@ -89,12 +88,19 @@ export function ReelsViewer({ reels }: ReelsViewerProps) {
           />
         </div>
       ))}
-      <ReelControls
-        onNext={handleNext}
-        onPrevious={handlePrevious}
-        hasNext={currentReelIndex < reels.length - 1}
-        hasPrevious={currentReelIndex > 0}
-      />
     </div>
   )
 }
+
+const scrollbarHideStyles = `
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+`

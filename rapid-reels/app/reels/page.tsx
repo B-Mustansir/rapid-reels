@@ -79,7 +79,7 @@ export default function ReelsPage() {
         <div className="flex-1">
           <ReelsViewer reels={dummyReels} />
         </div>
-        <div className="w-full lg:w-96">
+        <div className="w-full lg:w-72">
           <ReelsCreator />
         </div>
       </div>

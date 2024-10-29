@@ -34,7 +34,7 @@ export function TrendingPosts() {
     <div className="space-y-4">
       <h2 className="text-lg sm:text-xl font-semibold">Trending</h2>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         {/* Trending post cards */}
         {trendingPosts.map((post) => (
           <PostCard

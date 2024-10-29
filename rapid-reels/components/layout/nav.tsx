@@ -6,10 +6,15 @@ import { Home, Search, Film, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useEffect, useState } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
+import { Dock, DockIcon } from '@/components/ui/dock'
+import { motion, useMotionValue } from 'framer-motion'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from "@/components/ui/tooltip"
+import { buttonVariants } from "@/components/ui/button"
 
 export function Nav() {
   const pathname = usePathname()
   const [username, setUsername] = useState<string | null>(null)
+  const mouseX = useMotionValue(Infinity)
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -56,24 +61,48 @@ export function Nav() {
   ]
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/80 backdrop-blur-lg md:top-0 md:bottom-auto">
-      <div className="container flex h-14 items-center justify-around md:justify-between">
-        {links.map(({ href, label, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            className={cn(
-              "flex flex-col items-center justify-center md:flex-row md:gap-2 px-3 py-1.5 text-sm transition-colors hover:text-foreground",
-              pathname === href
-                ? "text-foreground"
-                : "text-muted-foreground"
-            )}
+    <div className="fixed bottom-6 left-0 right-0 z-50">
+      <motion.div
+        onMouseMove={(e) => mouseX.set(e.pageX)}
+        onMouseLeave={() => mouseX.set(Infinity)}
+      >
+        <TooltipProvider>
+          <Dock 
+            className="bg-background/80 border-t md:border-t-0 md:border-b"
+            magnification={50}
+            distance={100}
           >
-            <Icon className="h-5 w-5" />
-            <span className="text-xs md:text-sm">{label}</span>
-          </Link>
-        ))}
-      </div>
-    </nav>
+            {links.map(({ href, label, icon: Icon }) => (
+              <DockIcon
+                key={label}
+                mouseX={mouseX}
+                className="bg-transparent"
+              >
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link
+                      href={href}
+                      aria-label={label}
+                      className={cn(
+                        buttonVariants({ variant: "ghost", size: "icon" }),
+                        "size-12 rounded-full",
+                        pathname === href
+                          ? "text-foreground"
+                          : "text-muted-foreground"
+                      )}
+                    >
+                      <Icon className="size-5" />
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{label}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </DockIcon>
+            ))}
+          </Dock>
+        </TooltipProvider>
+      </motion.div>
+    </div>
   )
 }
