@@ -19,8 +19,8 @@ const INITIAL_TRUST_SCORE: TrustScoreData = {
   proof_of_personhood: false,
   engagement_score: 30,
   verification_level: 'basic',
-  total_score: 15,
-  verifications: ['Email Verified'], // Assuming email is verified during signup
+  total_score: 45,
+  verifications: ['Email Verified', 'Instagram Verified', 'Twitter Verified'], // Assuming email is verified during signup
   verification_history: [
     {
       type: 'Email',

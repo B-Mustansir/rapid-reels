@@ -70,6 +70,21 @@ const dummyReels = [
     effects: ['energy'],
     created_at: new Date().toISOString(),
   },
+  {
+    id: '5',
+    user: {
+      id: 'user5',
+      username: 'politics',
+      avatar_url: 'https://avatar.iran.liara.run/public/76',
+    },
+    video_url: 'https://res.cloudinary.com/dvhqjxen3/video/upload/v1730268245/samples/reels/zfclgvya3cdnuvqy2trr.mp4',
+    caption: '🍷Delhi Liquour Policy #answers #AAP',
+    likes: 1500,
+    comments: [],
+    music: 'Intense Mix',
+    effects: ['energy'],
+    created_at: new Date().toISOString(),
+  },
 ]
 
 export default function ReelsPage() {

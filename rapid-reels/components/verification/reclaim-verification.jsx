@@ -28,7 +28,7 @@ export function ReclaimVerification({ onVerificationComplete, userId }) {
         setVerificationComplete(true);
 
         // Update trust score
-        const updatedScore = updateTrustScore(userId, RECLAIM_PROVIDERS.EDIT_AI.id);
+        const updatedScore = updateTrustScore(userId, RECLAIM_PROVIDERS.GITHUB.id);
         console.log('Updated score:', updatedScore);
 
         toast({
@@ -78,7 +78,7 @@ export function ReclaimVerification({ onVerificationComplete, userId }) {
     return await ReclaimProofRequest.init(
       process.env.NEXT_PUBLIC_RECLAIM_APP_ID,
       process.env.NEXT_PUBLIC_RECLAIM_APP_SECRET,
-      RECLAIM_PROVIDERS.EDIT_AI.id
+      RECLAIM_PROVIDERS.GITHUB.id
     );
   }
 

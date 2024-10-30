@@ -7,7 +7,7 @@ export const RECLAIM_PROVIDERS = {
   GITHUB: {
     id: '6d3f6753-7ee6-49ee-a545-62f1b1822ae5',
     name: 'GitHub Account Verified',
-    scoreValue: 50, // Works
+    scoreValue: 20, // Works
   },
   GMAIL: {
     id: 'f9f383fd-32d9-4c54-942f-5e9fda349762',
